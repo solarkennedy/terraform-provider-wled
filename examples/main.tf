@@ -8,6 +8,7 @@ terraform {
 
 resource wled_settings "zbench2" {
   host = "wled-zbench2.local"
+  ui_description = "zBench5"
 }
 
 

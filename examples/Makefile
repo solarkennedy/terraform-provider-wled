@@ -1,2 +1,5 @@
 apply:
-	TF_LOG=debug terraform apply -auto-approve
+	terraform apply -auto-approve
+
+plan:
+	terraform plan

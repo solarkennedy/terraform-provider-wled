@@ -38,7 +38,7 @@ type WLEDSettings struct {
 
 func (c *WLEDClient) GetSettings() (WLEDSettings, error) {
 	settings := WLEDSettings{}
-	url := c.getSettingsURL()
+	url := c.getSettingsURL("win")
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *WLEDClient) GetSettings() (WLEDSettings, error) {
 }
 
 func (c *WLEDClient) SetSettings(new_settings WLEDSettings) error {
-	surl := c.getSettingsURL()
+	surl := c.getSettingsURL("settings/ui?")
 
 	data := url.Values{}
 
@@ -69,10 +69,9 @@ func (c *WLEDClient) SetSettings(new_settings WLEDSettings) error {
 	if err != nil {
 		return fmt.Errorf("Error posting body %+v to %s: %w", data, surl, err)
 	}
-
 	return nil
 }
 
-func (c *WLEDClient) getSettingsURL() string {
-	return "http://" + c.host + "/win"
+func (c *WLEDClient) getSettingsURL(extra string) string {
+	return "http://" + c.host + "/" + extra
 }
