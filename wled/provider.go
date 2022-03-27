@@ -7,7 +7,9 @@ import (
 // Provider -
 func Provider() *schema.Provider {
 	return &schema.Provider{
-		ResourcesMap:   map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"wled_settings": resourceWLEDSettings(),
+		},
 		DataSourcesMap: map[string]*schema.Resource{},
 	}
 }

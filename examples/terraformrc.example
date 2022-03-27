@@ -1,0 +1,7 @@
+# Put this block in your ~/.terraformrc for local development
+
+provider_installation {
+  dev_overrides {
+    "solarkennedy/wled" = "/home/kyle/Personal-Projects/terraform-provider-wled"
+  }
+}
