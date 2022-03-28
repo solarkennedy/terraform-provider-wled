@@ -38,6 +38,16 @@ func resourceWLEDPreset() *schema.Resource {
 				Optional:    true,
 				Description: "Should the LEDs be on with this preset, defaults to true",
 			},
+			"effect_speed": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Speed of effect selected, 0-255. Defaults to 128",
+			},
+			"effect_intensity": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Intensity of effect selected, 0-255. Defaults to 255",
+			},
 		},
 	}
 }
@@ -45,7 +55,24 @@ func resourceWLEDPreset() *schema.Resource {
 func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
-	default_segment := wled_client.WLEDSegment{}
+	default_segment := wled_client.WLEDSegment{
+		ID:               0,
+		Grouping:         0,
+		Spacing:          0,
+		Offfset:          0,
+		On:               false,
+		Feeze:            false,
+		Brightness:       0,
+		ColorTemperature: 0,
+		ColorArray:       [][]int{},
+		EffectID:         0,
+		EffectSpeed:      128,
+		EffectIntensity:  255,
+		PaletteID:        0,
+		Selected:         false,
+		Reversed:         false,
+		Mirrored:         false,
+	}
 	new_Preset := wled_client.WLEDPreset{
 		Name:       "",
 		On:         true,
@@ -69,6 +96,14 @@ func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m int
 	on, ok := d.GetOk("on")
 	if on != nil && ok {
 		new_Preset.On = on.(bool)
+	}
+	effect_speed, ok := d.GetOk("effect_speed")
+	if effect_speed != nil && ok {
+		new_Preset.Segments[0].EffectSpeed = effect_speed.(int)
+	}
+	effect_intensity, ok := d.GetOk("effect_intensity")
+	if effect_intensity != nil && ok {
+		new_Preset.Segments[0].EffectIntensity = effect_intensity.(int)
 	}
 	log.Printf("[DEBUG] Read raw new Preset %+v", new_Preset)
 	err := client.SetPreset(wled_client.WLEDPresetID(idStr), new_Preset)
