@@ -48,6 +48,11 @@ func resourceWLEDPreset() *schema.Resource {
 				Optional:    true,
 				Description: "Intensity of effect selected, 0-255. Defaults to 255",
 			},
+			"transition": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Duration of the crossfade between different colors/brightness levels. One unit is 100ms, so a value of 4 results in atransition of 400ms. Defaults to 7.",
+			},
 		},
 	}
 }
@@ -60,7 +65,7 @@ func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m int
 		Grouping:         0,
 		Spacing:          0,
 		Offfset:          0,
-		On:               false,
+		On:               true,
 		Feeze:            false,
 		Brightness:       0,
 		ColorTemperature: 0,
@@ -77,7 +82,7 @@ func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m int
 		Name:       "",
 		On:         true,
 		Brightness: 255,
-		Transition: 0,
+		Transition: 7,
 		Mainseg:    0,
 		Segments:   []wled_client.WLEDSegment{default_segment}}
 	host := d.Get("host").(string)
@@ -104,6 +109,10 @@ func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m int
 	effect_intensity, ok := d.GetOk("effect_intensity")
 	if effect_intensity != nil && ok {
 		new_Preset.Segments[0].EffectIntensity = effect_intensity.(int)
+	}
+	transition, ok := d.GetOk("transition")
+	if transition != nil && ok {
+		new_Preset.Transition = transition.(int)
 	}
 	log.Printf("[DEBUG] Read raw new Preset %+v", new_Preset)
 	err := client.SetPreset(wled_client.WLEDPresetID(idStr), new_Preset)
