@@ -9,6 +9,7 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
 			"wled_settings": resourceWLEDSettings(),
+			"wled_preset":   resourceWLEDPreset(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{},
 	}
