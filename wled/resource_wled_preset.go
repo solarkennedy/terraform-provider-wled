@@ -33,6 +33,11 @@ func resourceWLEDPreset() *schema.Resource {
 				Optional:    true,
 				Description: "Optional human readable name of the preset",
 			},
+			"on": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Should the LEDs be on with this preset, defaults to true",
+			},
 		},
 	}
 }
@@ -40,7 +45,14 @@ func resourceWLEDPreset() *schema.Resource {
 func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
-	new_Preset := wled_client.WLEDPreset{}
+	default_segment := wled_client.WLEDSegment{}
+	new_Preset := wled_client.WLEDPreset{
+		Name:       "",
+		On:         true,
+		Brightness: 255,
+		Transition: 0,
+		Mainseg:    0,
+		Segments:   []wled_client.WLEDSegment{default_segment}}
 	host := d.Get("host").(string)
 	client := wled_client.NewWLEDClient(host)
 
@@ -53,6 +65,10 @@ func resourceWLEDPresetCreate(ctx context.Context, d *schema.ResourceData, m int
 	name, ok := d.GetOk("name")
 	if name != nil && ok {
 		new_Preset.Name = name.(string)
+	}
+	on, ok := d.GetOk("on")
+	if on != nil && ok {
+		new_Preset.On = on.(bool)
 	}
 	log.Printf("[DEBUG] Read raw new Preset %+v", new_Preset)
 	err := client.SetPreset(wled_client.WLEDPresetID(idStr), new_Preset)
