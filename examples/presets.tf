@@ -6,4 +6,5 @@ resource wled_preset "zbench2_white" {
   effect_speed = 42
   effect_intensity = 200
   transition = 10
+  brightness = 242
 }
